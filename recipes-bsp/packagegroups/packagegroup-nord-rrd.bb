@@ -19,6 +19,7 @@ RRECOMMENDS:${PN}-firmware = " \
 "
 
 RDEPENDS:${PN}-hexagon-dsp-binaries = " \
-    hexagon-dsp-binaries-qcom-sa8797p-ride-embedded-adsp \
     hexagon-dsp-binaries-qcom-sa8797p-ride-embedded-cdsp \
+    hexagon-dsp-binaries-qcom-sa8797p-ride-embedded-hpass-audio \
+    hexagon-dsp-binaries-qcom-sa8797p-ride-embedded-hpass-computelite \
 "

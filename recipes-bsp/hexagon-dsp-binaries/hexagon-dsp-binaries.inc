@@ -77,8 +77,9 @@ PACKAGE_BEFORE_PN =+ "\
     ${PN}-qcom-sa8775p-ride-adsp \
     ${PN}-qcom-sa8775p-ride-cdsp \
     ${PN}-qcom-sa8775p-ride-gdsp \
-    ${PN}-qcom-sa8797p-ride-embedded-adsp \
     ${PN}-qcom-sa8797p-ride-embedded-cdsp \
+    ${PN}-qcom-sa8797p-ride-embedded-hpass-audio \
+    ${PN}-qcom-sa8797p-ride-embedded-hpass-computelite \
     ${PN}-qcom-sdm845-hdk-adsp \
     ${PN}-qcom-sdm845-hdk-cdsp \
     ${PN}-qcom-shikra-cqm-evk-cdsp \
@@ -150,8 +151,9 @@ LICENSE:${PN}-qcom-qcs8300-ride-gdsp = "LicenseRef-Firmware-qcom-2"
 LICENSE:${PN}-qcom-sa8775p-ride-adsp = "LicenseRef-Firmware-qcom-2"
 LICENSE:${PN}-qcom-sa8775p-ride-cdsp = "LicenseRef-Firmware-qcom-2"
 LICENSE:${PN}-qcom-sa8775p-ride-gdsp = "LicenseRef-Firmware-qcom-2"
-LICENSE:${PN}-qcom-sa8797p-ride-embedded-adsp = "LicenseRef-Firmware-qcom-2"
 LICENSE:${PN}-qcom-sa8797p-ride-embedded-cdsp = "LicenseRef-Firmware-qcom-2"
+LICENSE:${PN}-qcom-sa8797p-ride-embedded-hpass-audio = "LicenseRef-Firmware-qcom-2"
+LICENSE:${PN}-qcom-sa8797p-ride-embedded-hpass-computelite = "LicenseRef-Firmware-qcom-2"
 LICENSE:${PN}-qcom-sdm845-hdk-adsp = "LicenseRef-Firmware-qcom"
 LICENSE:${PN}-qcom-sdm845-hdk-cdsp = "LicenseRef-Firmware-qcom"
 LICENSE:${PN}-qcom-shikra-cqm-evk-cdsp = "LicenseRef-Firmware-qcom-2"
@@ -220,8 +222,9 @@ RDEPENDS:${PN}-qcom-qcs8300-ride-gdsp = "${PN}-qcom-sa8775p-ride-gdsp (= ${PV})"
 RDEPENDS:${PN}-qcom-sa8775p-ride-adsp = "linux-firmware-qcom-sa8775p-audio (= 1:${PV})"
 RDEPENDS:${PN}-qcom-sa8775p-ride-cdsp = "linux-firmware-qcom-sa8775p-compute (= 1:${PV})"
 RDEPENDS:${PN}-qcom-sa8775p-ride-gdsp = "linux-firmware-qcom-sa8775p-generalpurpose (= 1:${PV})"
-RDEPENDS:${PN}-qcom-sa8797p-ride-embedded-adsp = "linux-firmware-qcom-nord-audio (= 1:${PV})"
 RDEPENDS:${PN}-qcom-sa8797p-ride-embedded-cdsp = "linux-firmware-qcom-nord-compute (= 1:${PV})"
+RDEPENDS:${PN}-qcom-sa8797p-ride-embedded-hpass-audio = "linux-firmware-qcom-nord-audio (= 1:${PV})"
+RDEPENDS:${PN}-qcom-sa8797p-ride-embedded-hpass-computelite = "linux-firmware-qcom-nord-audio (= 1:${PV})"
 RDEPENDS:${PN}-qcom-sdm845-hdk-adsp = "${PN}-thundercomm-db845c-adsp (= ${PV})"
 RDEPENDS:${PN}-qcom-sdm845-hdk-cdsp = "${PN}-thundercomm-db845c-cdsp (= ${PV})"
 RDEPENDS:${PN}-qcom-shikra-cqm-evk-cdsp = "${PN}-qcom-shikra-cqs-evk-cdsp (= ${PV})"
@@ -247,10 +250,15 @@ RDEPENDS:${PN}-thundercomm-rubikpi3-cdsp = "${PN}-thundercomm-rb3gen2-cdsp (= ${
 
 python() {
     for p in d.getVar('PACKAGES').split():
-        if not p.endswith('dsp'):
+        if p.endswith('-hpass-audio'):
+            cfg = (p[:-len('-hpass-audio')] + '-config').replace('-qcom-', '-qualcomm-')
+        elif p.endswith('-hpass-computelite'):
+            cfg = (p[:-len('-hpass-computelite')] + '-config').replace('-qcom-', '-qualcomm-')
+        elif p.endswith('dsp'):
+            cfg = (p[:-4] + 'config').replace('-qcom-', '-qualcomm-')
+        else:
             continue
 
-        cfg = (p[:-4] + 'config').replace('-qcom-', '-qualcomm-')
         if cfg not in (d.getVar('RDEPENDS:' + p) or "").split():
             d.prependVar('RDEPENDS:' + p, cfg + ' ')
 }
@@ -319,8 +327,9 @@ FILES:${PN}-qcom-qcs8300-ride-gdsp = "${datadir}/qcom/qcs8300/Qualcomm/QCS8300-R
 FILES:${PN}-qcom-sa8775p-ride-adsp = "${datadir}/qcom/sa8775p/Qualcomm/SA8775P-RIDE/dsp/adsp"
 FILES:${PN}-qcom-sa8775p-ride-cdsp = "${datadir}/qcom/sa8775p/Qualcomm/SA8775P-RIDE/dsp/cdsp*"
 FILES:${PN}-qcom-sa8775p-ride-gdsp = "${datadir}/qcom/sa8775p/Qualcomm/SA8775P-RIDE/dsp/gdsp*"
-FILES:${PN}-qcom-sa8797p-ride-embedded-adsp = "${datadir}/qcom/nord/Qualcomm/SA8797P-Ride-Embedded/dsp/adsp*"
 FILES:${PN}-qcom-sa8797p-ride-embedded-cdsp = "${datadir}/qcom/nord/Qualcomm/SA8797P-Ride-Embedded/dsp/cdsp*"
+FILES:${PN}-qcom-sa8797p-ride-embedded-hpass-audio = "${datadir}/qcom/nord/Qualcomm/SA8797P-Ride-Embedded/dsp/hpass_audio*"
+FILES:${PN}-qcom-sa8797p-ride-embedded-hpass-computelite = "${datadir}/qcom/nord/Qualcomm/SA8797P-Ride-Embedded/dsp/hpass_computelite*"
 FILES:${PN}-qcom-sdm845-hdk-adsp = "${datadir}/qcom/sdm845/Qualcomm/SDM845-HDK/dsp/adsp"
 FILES:${PN}-qcom-sdm845-hdk-cdsp = "${datadir}/qcom/sdm845/Qualcomm/SDM845-HDK/dsp/cdsp*"
 FILES:${PN}-qcom-shikra-cqm-evk-cdsp = "${datadir}/qcom/shikra/Qualcomm/Shikra-CQM-EVK/dsp/cdsp"
@@ -364,8 +373,9 @@ INSANE_SKIP:${PN}-qcom-qcs8300-ride-gdsp = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-sa8775p-ride-adsp = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-sa8775p-ride-cdsp = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-sa8775p-ride-gdsp = "arch libdir file-rdeps textrel"
-INSANE_SKIP:${PN}-qcom-sa8797p-ride-embedded-adsp = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-sa8797p-ride-embedded-cdsp = "arch libdir file-rdeps textrel"
+INSANE_SKIP:${PN}-qcom-sa8797p-ride-embedded-hpass-audio = "arch libdir file-rdeps textrel"
+INSANE_SKIP:${PN}-qcom-sa8797p-ride-embedded-hpass-computelite = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-shikra-cqs-evk-cdsp = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-sm8750-mtp-adsp = "arch libdir file-rdeps textrel"
 INSANE_SKIP:${PN}-qcom-sm8750-mtp-cdsp = "arch libdir file-rdeps textrel"
@@ -401,8 +411,9 @@ SKIP_FILEDEPS:${PN}-qcom-qcs8300-ride-gdsp = "1"
 SKIP_FILEDEPS:${PN}-qcom-sa8775p-ride-adsp = "1"
 SKIP_FILEDEPS:${PN}-qcom-sa8775p-ride-cdsp = "1"
 SKIP_FILEDEPS:${PN}-qcom-sa8775p-ride-gdsp = "1"
-SKIP_FILEDEPS:${PN}-qcom-sa8797p-ride-embedded-adsp = "1"
 SKIP_FILEDEPS:${PN}-qcom-sa8797p-ride-embedded-cdsp = "1"
+SKIP_FILEDEPS:${PN}-qcom-sa8797p-ride-embedded-hpass-audio = "1"
+SKIP_FILEDEPS:${PN}-qcom-sa8797p-ride-embedded-hpass-computelite = "1"
 SKIP_FILEDEPS:${PN}-qcom-shikra-cqs-evk-cdsp = "1"
 SKIP_FILEDEPS:${PN}-qcom-sm8750-mtp-adsp = "1"
 SKIP_FILEDEPS:${PN}-qcom-sm8750-mtp-cdsp = "1"
